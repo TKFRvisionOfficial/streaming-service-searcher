@@ -1,6 +1,7 @@
 from time import sleep
 import pyautogui
 import json
+import pprint
 
 interval = 0.08
 
@@ -42,12 +43,31 @@ def write_two(a, b):
     pyautogui.press("tab")
 
 
+def rewrap_movies(movies):
+    movie_dict = {}
+    for movie in movies:
+        if movies[movie] is not None:
+            services = {}
+            for country in movies[movie]:
+                for service in movies[movie][country]:
+                    if service not in services:
+                        services[service] = []
+                    services[service].append(country)
+            movie_dict[movie] = services
+        else:
+            movie_dict[movie] = None
+    return movie_dict
+
+
 with open("movies.json", "r", encoding="utf-8") as file:
-    movies = json.load(file)
+    _movies = json.load(file)
 
 sleep(7)
-for movie in movies:
-    if movies[movie] is None:
-        connect_fields(movie)
+
+_rewrap = rewrap_movies(_movies)
+for _movie in _rewrap:
+    if _rewrap[_movie] is None:
+        connect_fields(_movie)
     else:
-        write_two(movie, ", ".join(movies[movie]))
+        write_two(_movie,
+                  ", ".join([" ".join((i, "(" + (", ".join(_rewrap[_movie][i])) + ")")) for i in _rewrap[_movie]]))

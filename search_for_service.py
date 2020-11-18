@@ -4,6 +4,7 @@ import json
 from urllib import parse as urlparse
 import unicodedata
 import re
+import os
 
 _headers = ({'User-Agent':
                  'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 '
@@ -54,7 +55,12 @@ if __name__ == '__main__':
     with open("movies.txt", "r", encoding="utf-8") as file:
         _movie_txt = file.read().splitlines(keepends=False)
 
-    _movie_list = {}
+    if os.path.exists("movies.json"):
+        with open("movies.json", "r", encoding="utf-8") as file:
+            _movie_list = json.load(file)
+    else:
+        _movie_list = {}
+
     _country = get_country()
     _movie_list[_country] = {}
 
@@ -71,7 +77,9 @@ if __name__ == '__main__':
                 if is_prime(_movie_services['Amazon Prime Video'][1]):
                     _subscription.append('Amazon Prime Video')
 
-            _movie_list[_country][_movie] = _subscription
+            if _movie not in _movie_list:
+                _movie_list[_movie] = {}
+            _movie_list[_movie][_country] = _subscription
 
     with open("movies.json", "w", encoding="utf-8") as file:
         json.dump(_movie_list, file, indent="\t", ensure_ascii=False)
