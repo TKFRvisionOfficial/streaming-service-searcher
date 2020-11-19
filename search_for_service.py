@@ -62,12 +62,11 @@ if __name__ == '__main__':
         _movie_list = {}
 
     _country = get_country()
-    _movie_list[_country] = {}
 
     for _movie in _movie_txt:
         _search_obj = re.search(r'\\/--(?P<text>.+)--\\/', _movie)
         if _search_obj is not None:
-            _movie_list[_search_obj.group(1)] = None  # shitty implementation...not good practive
+            _movie_list[_search_obj.group(1)] = None  # shitty implementation...not good practice
         elif _movie != '':
             print(_movie)
             _movie_services = get_services(_movie)
